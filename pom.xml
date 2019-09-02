@@ -2,10 +2,10 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>br.com.meetup.ansible</groupId>
-	<artifactId>soccer-stats</artifactId>
+	<artifactId>ci-lab</artifactId>
 	<version>0.0.2</version>
 	<packaging>jar</packaging>
-	<name>soccer-stats</name>
+	<name>ci-lab</name>
 	<description>A simple API to display soccer matches results</description>
 
 	<parent>
