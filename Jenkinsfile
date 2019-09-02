@@ -14,25 +14,25 @@ stage('Build') {
         }
     }
 }
-
-stage('Unit Tests') {
-    node {
-        withEnv(["PATH+MAVEN=${tool 'm3'}/bin"]) {
-            sh "mvn -B clean test"
-            stash name: "unit_tests", includes: "target/surefire-reports/**"
-        }
-    }
-}
-
-
-stage('Integration Tests') {
-    node {
-        withEnv(["PATH+MAVEN=${tool 'm3'}/bin"]) {
-            sh "mvn -B clean verify -Dsurefire.skip=true"
-            stash name: 'it_tests', includes: 'target/failsafe-reports/**'
-        }
-    }
-}
+//
+//stage('Unit Tests') {
+//    node {
+//        withEnv(["PATH+MAVEN=${tool 'm3'}/bin"]) {
+//            sh "mvn -B clean test"
+//            stash name: "unit_tests", includes: "target/surefire-reports/**"
+//        }
+//    }
+//}
+//
+//
+//stage('Integration Tests') {
+//    node {
+//        withEnv(["PATH+MAVEN=${tool 'm3'}/bin"]) {
+//            sh "mvn -B clean verify -Dsurefire.skip=true"
+//            stash name: 'it_tests', includes: 'target/failsafe-reports/**'
+//        }
+//    }
+//}
 
 
 
