@@ -94,6 +94,8 @@ stage('Build Docker Image') {
         def file = "${pom.artifactId}-${pom.version}"
         def jar = "target/${file}.jar"
 
+        sh "ls -all"
+
         echo "Jar path: ${jar}"
 
 //        sh "mv ${jar} ./data"
