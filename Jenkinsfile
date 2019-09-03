@@ -10,6 +10,7 @@ final DOCKER_REPO_URL="https://${DOCKER_REPO_HOST}"
 final DOCKER_IMAGE_NAME = "ci-test-project"
 final DOCKER_CONTAINER_NAME = "ci-test-project-container"
 final DOCKER_IMAGE_TAG = "${DOCKER_REPO_HOST}/${DOCKER_IMAGE_NAME}:${BUILD_NUMBER}"
+final APP_PORT=8088
 
 stage('Build') {
     node {
@@ -103,6 +104,13 @@ stage('Docker Image Upload'){
 
 stage('Deploy'){
     node {
-        sh "docker run -d --rm -p 8088:8080 --name ${DOCKER_CONTAINER_NAME} ${DOCKER_IMAGE_TAG}"
+        try {
+            sh "docker stop ${DOCKER_CONTAINER_NAME}"
+        } catch (Exception e) {
+            echo "${DOCKER_CONTAINER_NAME} not found."
+        }
+
+        sh "docker run -d --rm -p ${APP_PORT}:8080 --name ${DOCKER_CONTAINER_NAME} ${DOCKER_IMAGE_TAG}"
+        echo "App running in port ${APP_PORT}"
     }
 }
