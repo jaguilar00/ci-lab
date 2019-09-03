@@ -11,4 +11,4 @@ EXPOSE 8080
 CMD java -jar /data/ci-lab-0.0.2.jar
 
 #copy ci-lab.jar to docker image
-ADD ./data/ci-lab-0.0.2.jar /data/ci-lab-0.0.2.jar
+ADD target/ci-lab-0.0.2.jar /data/ci-lab-0.0.2.jar
