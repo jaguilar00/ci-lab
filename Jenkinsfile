@@ -96,6 +96,10 @@ stage('Build Docker Image') {
 
         sh "ls -all"
 
+        echo "showing target context"
+
+        sh "ls -all target/"
+
         echo "Jar path: ${jar}"
 
 //        sh "mv ${jar} ./data"
