@@ -2,6 +2,13 @@
 
 final GIT_URL = 'https://github.com/jaguilar00/ci-lab.git'
 final NEXUS_URL = '172.20.68.52:8081'
+final NEXUS_REPO = 'ci-test-project'
+final CONTAINER_NAME= 'ci-test-project'
+
+final DOCKER_REPO_HOST = "registry.intranet.sms"
+final DOCKER_REPO_URL="https://${DOCKER_REPO_HOST}"
+final DOCKER_IMAGE_NAME = "ci-test-project"
+final DOCKER_IMAGE_TAG = "${REPO_HOST}/${DOCKER_IMAGE_NAME}:${BUILD_NUMBER}"
 
 stage('Build') {
     node {
@@ -24,7 +31,6 @@ stage('Unit Tests') {
     }
 }
 
-
 stage('Integration Tests') {
     node {
         withEnv(["PATH+MAVEN=${tool 'm3'}/bin"]) {
@@ -46,16 +52,11 @@ stage('Static Analysis') {
     }
 }
 
-
-
 stage('Approval') {
     timeout(time:3, unit:'DAYS') {
         input 'Do I have your approval for deployment?'
     }
 }
-
-
-
 
 stage('Artifact Upload') {
     node {
@@ -68,7 +69,7 @@ stage('Artifact Upload') {
         sh "cp pom.xml ${file}.pom"
 
         nexusArtifactUploader artifacts: [
-                [artifactId: "${pom.artifactId}", classifier: '', file: "target/${file}.jar", type: 'jar'],
+                [artifactId: "${pom.artifactId}", classifier: '', file: "${jar}", type: 'jar'],
                 [artifactId: "${pom.artifactId}", classifier: '', file: "${file}.pom", type: 'pom']
             ],
             credentialsId: 'nexus-credentials',
@@ -76,46 +77,32 @@ stage('Artifact Upload') {
             nexusUrl: NEXUS_URL,
             nexusVersion: 'nexus3',
             protocol: 'http',
-            repository: 'ci-test-project',
+            repository: NEXUS_REPO,
             version: "${pom.version}"
     }
 }
 
+stage('Build Docker Image') {
+    // build docker image
+    sh "whoami"
+    sh "ls -all /var/run/docker.sock"
 
+    unstash 'artifact'
 
-//stage('Deploy') {
-//    node {
-//        def pom = readMavenPom file: "pom.xml"
-//        def repoPath =  "${pom.groupId}".replace(".", "/") +
-//                        "/${pom.artifactId}"
-//
-//        def version = pom.version
-//
-//        if(!FULL_BUILD) { //takes the last version from repo
-//            sh "curl -o metadata.xml -s http://${NEXUS_URL}/repository/soccer-test-app/${repoPath}/maven-metadata.xml"
-//            version = sh script: 'xmllint metadata.xml --xpath "string(//latest)"',
-//                         returnStdout: true
-//        }
-//        def artifactUrl = "http://${NEXUS_URL}/repository/soccer-test-app/${repoPath}/${version}/${pom.artifactId}-${version}.war"
-//
-//        withEnv(["ARTIFACT_URL=${artifactUrl}", "APP_NAME=${pom.artifactId}"]) {
-//            echo "The URL is ${env.ARTIFACT_URL} and the app name is ${env.APP_NAME}"
-//
-//            // install galaxy roles
-//            sh "ansible-galaxy install -vvv -r provision/requirements.yml -p provision/roles/"
-//
-//            ansiblePlaybook colorized: true,
-//            credentialsId: 'ssh-jenkins',
-//            limit: "${HOST_PROVISION}",
-//            installation: 'ansible',
-//            inventory: 'provision/inventory.ini',
-//            playbook: 'provision/playbook.yml',
-//            become: true,
-//            becomeUser: 'jenkins',
-//            extraVars: [
-//                    ARTIFACT_URL: '${artifactUrl}',
-//                    APP_NAME:'${APP_NAME}'
-//            ]
-//        }
-//    }
-//}
+    def pom = readMavenPom file: 'pom.xml'
+    def file = "${pom.artifactId}-${pom.version}"
+    def jar = "target/${file}.jar"
+
+    sh "mv ${jar} ./data"
+
+    docker.build(CONTAINER_NAME)
+}
+
+stage('Deploy Docker Image'){
+
+    echo "Docker Image Tag Name: ${DOCKER}"
+
+    sh "docker login -u admin -p admin123 ${DOCKER_REPO_URL}"
+    sh "docker tag ${DOCKER_IMAGE_NAME} ${DOCKER_IMAGE_TAG}"
+    sh "docker push ${DOCKER_IMAGE_TAG}"
+}
