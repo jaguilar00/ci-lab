@@ -8,7 +8,7 @@ final CONTAINER_NAME= 'ci-test-project'
 final DOCKER_REPO_HOST = "registry.intranet.sms"
 final DOCKER_REPO_URL="https://${DOCKER_REPO_HOST}"
 final DOCKER_IMAGE_NAME = "ci-test-project"
-final DOCKER_IMAGE_TAG = "${REPO_HOST}/${DOCKER_IMAGE_NAME}:${BUILD_NUMBER}"
+final DOCKER_IMAGE_TAG = "${DOCKER_REPO_HOST}/${DOCKER_IMAGE_NAME}:${BUILD_NUMBER}"
 
 stage('Build') {
     node {
