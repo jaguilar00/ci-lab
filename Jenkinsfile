@@ -53,12 +53,12 @@ stage('Static Analysis') {
         }
     }
 }
-
-stage('Approval') {
-    timeout(time:3, unit:'DAYS') {
-        input 'Do I have your approval for deployment?'
-    }
-}
+//For approval stage
+//stage('Approval') {
+//    timeout(time:3, unit:'DAYS') {
+//        input 'Do I have your approval for deployment?'
+//    }
+//}
 
 stage('Artifact Upload') {
     node {
@@ -96,20 +96,22 @@ stage('Docker Image Upload'){
     node {
         echo "Docker Image Tag Name: ${DOCKER_IMAGE_NAME}"
 
-        sh "docker login -u admin -p admin123 ${DOCKER_REPO_URL}"
-        sh "docker tag ${DOCKER_IMAGE_NAME} ${DOCKER_IMAGE_TAG}"
-        sh "docker push ${DOCKER_IMAGE_TAG}"
+        withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'registry-credentials', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+            sh "docker login -u ${USERNAME} -p ${PASSWORD} ${DOCKER_REPO_URL}"
+            sh "docker tag ${DOCKER_IMAGE_NAME} ${DOCKER_IMAGE_TAG}"
+            sh "docker push ${DOCKER_IMAGE_TAG}"
+        }
     }
 }
 
 stage('Deploy'){
     node {
+
         try {
             sh "docker stop ${DOCKER_CONTAINER_NAME}"
         } catch (Exception e) {
             echo "${DOCKER_CONTAINER_NAME} not found."
         }
-
         sh "docker run -d --rm -p ${APP_PORT}:8080 --name ${DOCKER_CONTAINER_NAME} ${DOCKER_IMAGE_TAG}"
         echo "App running in port ${APP_PORT}"
     }
