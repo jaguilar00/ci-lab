@@ -8,7 +8,7 @@ MAINTAINER jaguilar@sms-latam.com
 EXPOSE 8080
 
 #default command
-CMD java -jar /data/ci-lab-0.0.2.jar
+CMD java -jar /data/ci-lab.jar
 
 #copy ci-lab.jar to docker image
-ADD target/ci-lab-0.0.2.jar /data/ci-lab-0.0.2.jar
+ADD target/ci-lab*.jar /data/ci-lab.jar
