@@ -1,7 +1,7 @@
 #!groovy​
 
 final GIT_URL = 'https://github.com/jaguilar00/ci-lab.git'
-final NEXUS_URL = '192.168.50.10:8081'
+final NEXUS_URL = '172.20.68.52:8081'
 
 stage('Build') {
     node {
