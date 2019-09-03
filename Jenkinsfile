@@ -110,7 +110,7 @@ stage('Build Docker Image') {
 
 stage('Deploy Docker Image'){
     node {
-        echo "Docker Image Tag Name: ${DOCKER}"
+        echo "Docker Image Tag Name: ${DOCKER_IMAGE_NAME}"
 
         sh "docker login -u admin -p admin123 ${DOCKER_REPO_URL}"
         sh "docker tag ${DOCKER_IMAGE_NAME} ${DOCKER_IMAGE_TAG}"
