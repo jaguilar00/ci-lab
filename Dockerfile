@@ -8,7 +8,7 @@ MAINTAINER jaguilar@sms-latam.com
 EXPOSE 8080
 
 #default command
-CMD java -jar /data/ci-test-project.jar
+CMD java -jar /data/ci-lab-0.0.2.jar
 
 #copy ci-lab.jar to docker image
-ADD ./data/hello-world-0.1.0.jar /data/ci-lab-0.0.2.jar
+ADD ./data/ci-lab-0.0.2.jar /data/ci-lab-0.0.2.jar
