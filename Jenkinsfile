@@ -83,26 +83,29 @@ stage('Artifact Upload') {
 }
 
 stage('Build Docker Image') {
-    // build docker image
-    sh "whoami"
-    sh "ls -all /var/run/docker.sock"
+    node {
+        // build docker image
+        sh "whoami"
+        sh "ls -all /var/run/docker.sock"
 
-    unstash 'artifact'
+        unstash 'artifact'
 
-    def pom = readMavenPom file: 'pom.xml'
-    def file = "${pom.artifactId}-${pom.version}"
-    def jar = "target/${file}.jar"
+        def pom = readMavenPom file: 'pom.xml'
+        def file = "${pom.artifactId}-${pom.version}"
+        def jar = "target/${file}.jar"
 
-    sh "mv ${jar} ./data"
+        sh "mv ${jar} ./data"
 
-    docker.build(CONTAINER_NAME)
+        docker.build(CONTAINER_NAME)
+    }
 }
 
 stage('Deploy Docker Image'){
+    node {
+        echo "Docker Image Tag Name: ${DOCKER}"
 
-    echo "Docker Image Tag Name: ${DOCKER}"
-
-    sh "docker login -u admin -p admin123 ${DOCKER_REPO_URL}"
-    sh "docker tag ${DOCKER_IMAGE_NAME} ${DOCKER_IMAGE_TAG}"
-    sh "docker push ${DOCKER_IMAGE_TAG}"
+        sh "docker login -u admin -p admin123 ${DOCKER_REPO_URL}"
+        sh "docker tag ${DOCKER_IMAGE_NAME} ${DOCKER_IMAGE_TAG}"
+        sh "docker push ${DOCKER_IMAGE_TAG}"
+    }
 }
