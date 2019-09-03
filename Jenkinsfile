@@ -76,7 +76,7 @@ stage('Artifact Upload') {
             nexusUrl: NEXUS_URL,
             nexusVersion: 'nexus3',
             protocol: 'http',
-            repository: 'ci-lab',
+            repository: 'ci-test-project',
             version: "${pom.version}"
     }
 }
