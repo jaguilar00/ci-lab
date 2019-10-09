@@ -8,8 +8,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class IndexController {
 
-    public IndexController() {
+    private String monitor;
 
+    public IndexController() throws InterruptedException {
+        //Smell!!
+        //TODO Delete
+        synchronized(monitor) {
+            while(true){
+                Thread.sleep(200);
+            }
+        }
     }
 
     @GetMapping("/")
