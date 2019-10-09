@@ -11,13 +11,6 @@ public class IndexController {
     private String monitor;
 
     public IndexController() throws InterruptedException {
-        //Smell!!
-        //TODO Delete
-        synchronized(monitor) {
-            while(true){
-                Thread.sleep(200);
-            }
-        }
     }
 
     @GetMapping("/")
