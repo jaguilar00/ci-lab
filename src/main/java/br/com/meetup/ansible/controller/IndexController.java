@@ -11,7 +11,6 @@ public class IndexController {
     private String monitor;
 
     public IndexController() throws InterruptedException {
-        System.out.println("test");
     }
 
     @GetMapping("/")
